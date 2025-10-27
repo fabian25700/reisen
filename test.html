@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Parallax Demo — Minimal & Elegant</title>
+
+  <!--
+    Parallax Single-File Demo
+    - Responsive, mobile-aware
+    - Layers: <section class="parallax-layer" data-speed="0.3"> ... </section>
+    - data-speed: 0 = statisch (fix), 1 = normal scroll speed, <1 = langsamer Hintergrund
+    - Kommentare erklären, wie Entwickelnde / KIs erweitern können.
+  -->
+
+  <style>
+    :root{
+      --bg:#071022;
+      --fg:#ffffff;
+      --muted:#9aa6b2;
+      --accent:#06b6d4;
+      --max-width:1200px;
+      --container-pad:20px;
+      --hero-height:80vh;
+    }
+
+    /* Reset / Base */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--fg); -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+    a{color:inherit;text-decoration:none}
+
+    /* Layout container */
+    .site{
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:var(--container-pad);
+    }
+
+    header.site-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 0;
+    }
+    .brand {display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7c3aed)}
+
+    /* Parallax stage: each layer positioned absolute in stacking context */
+    .parallax-stage{
+      position:relative;
+      width:100%;
+      height:var(--hero-height);
+      overflow:hidden;
+      border-radius:14px;
+      margin:12px 0;
+      background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.28));
+      box-shadow:0 10px 40px rgba(2,6,23,0.7);
+    }
+
+    /* Each layer covers the stage; transform used to move them */
+    .parallax-layer{
+      position:absolute;
+      inset:0;
+      will-change:transform;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      pointer-events:none; /* content inside may be non-interactive; we wrap interactive content separately */
+    }
+
+    /* Background images should cover */
+    .parallax-bg { background-size:cover; background-position:center; }
+
+    /* Foreground content area (interactive) */
+    .stage-foreground {
+      position:relative;
+      z-index:30;
+      pointer-events:auto;
+      display:flex;
+      align-items:flex-end;
+      height:100%;
+      padding:36px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius:12px;
+      padding:18px;
+      max-width:720px;
+      color:var(--fg);
+      backdrop-filter:blur(6px);
+      box-shadow:0 6px 22px rgba(2,6,23,0.6);
+    }
+    h1{margin:0 0 8px;font-size:clamp(1.6rem, 3.2vw, 2.4rem);}
+    p.lead{margin:0;color:var(--muted);line-height:1.5}
+
+    /* Content sections below hero */
+    section.content{
+      margin:28px 0;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
+      padding:20px;border-radius:10px;
+    }
+
+    /* Simple responsive grid */
+    .grid{
+      display:grid;
+      gap:16px;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    }
+
+    footer{margin:28px 0;color:var(--muted);font-size:0.9rem}
+
+    /* Accessibility: respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .parallax-layer { transition:none !important; }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width:720px){
+      :root{ --hero-height:60vh; }
+      .stage-foreground{ align-items:center; padding:18px; }
+      .card{ padding:14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="site" id="siteRoot">
+    <header class="site-header" role="banner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-weight:700">Meine Parallax-Seite</div>
+          <div style="font-size:0.85rem;color:var(--muted)">Minimal · Elegant · Responsive</div>
+        </div>
+      </div>
+
+      <nav aria-label="Hauptnavigation">
+        <a href="#about" style="margin-right:12px">Über</a>
+        <a href="#features">Features</a>
+      </nav>
+    </header>
+
+    <!-- Parallax Stage: mehrere Layer (Hintergrundgeschwindigkeiten anpassen) -->
+    <main class="parallax-stage" id="parallaxStage" aria-label="Parallax Bühne">
+      <!-- Layer 1: tiefster Hintergrund, sehr langsam -->
+      <div class="parallax-layer parallax-bg" data-speed="0.25"
+           style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop'); z-index:1;">
+      </div>
+
+      <!-- Layer 2: mittlerer Hintergrund -->
+      <div class="parallax-layer parallax-bg" data-speed="0.45"
+           style="background-image:linear-gradient(180deg, rgba(6,6,12,0.08), rgba(6,6,12,0.28)), url('https://images.unsplash.com/photo-1482192505345-5655af888cc4?q=80&w=1600&auto=format&fit=crop'); z-index:5; opacity:0.95;">
+      </div>
+
+      <!-- Layer 3: dekorativ shapes / overlays (leichter) -->
+      <div class="parallax-layer" data-speed="0.65" style="z-index:10; mix-blend-mode:soft-light; opacity:0.9;">
+        <!-- Einfache SVG-Form als dekoratives Element -->
+        <svg width="80%" height="80%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#06b6d4" stop-opacity="0.12" />
+              <stop offset="1" stop-color="#7c3aed" stop-opacity="0.09" />
+            </linearGradient>
+          </defs>
+          <rect x="0" y="40" rx="40" ry="40" width="100%" height="320" fill="url(#g1)"></rect>
+        </svg>
+      </div>
+
+      <!-- Foreground (interaktive, klickbare Inhalte) -->
+      <div class="stage-foreground" style="z-index:30;">
+        <div class="card" role="region" aria-labelledby="heroTitle">
+          <h1 id="heroTitle">Elegant. Minimalistisch. Parallax.</h1>
+          <p class="lead">Dezenter Parallax-Effekt für Hero-Bilder. Funktioniert auf Desktop und Mobile (mit Fallbacks). Scrolle nach unten, um die Bewegung zu sehen.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Inhalt unter der Bühne -->
+    <section id="about" class="content">
+      <h2>Über dieses Demo</h2>
+      <div class="grid">
+        <div>
+          <p><strong>Performance:</strong> RequestAnimationFrame und will-change für flüssiges Scrolling.</p>
+        </div>
+        <div>
+          <p><strong>Barrierefreiheit:</strong> prefers-reduced-motion wird respektiert; es gibt einen statischen Fallback.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="content">
+      <h2>Features</h2>
+      <ul>
+        <li>Layerbasiertes Parallax (data-speed)</li>
+        <li>Mobile-Fallback und reduzierte Bewegung</li>
+        <li>Einfach erweiterbar: weitere .parallax-layer hinzufügen</li>
+      </ul>
+    </section>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="color:var(--muted)">© <span id="year"></span> Parallax Demo</div>
+        <div style="color:var(--muted)">Tip: Ersetze Unsplash-URLs durch eigene Assets</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /**************************************************************
+     * Parallax Engine (vanilla JS)
+     * - Liest .parallax-layer Elemente mit data-speed
+     * - Übersetzt Scrollposition in transform (translateY) für jeden Layer
+     * - Nutzt requestAnimationFrame für Performance
+     * - Respects prefers-reduced-motion
+     **************************************************************/
+
+    (function(){
+      const stage = document.getElementById('parallaxStage');
+      const layers = Array.from(stage.querySelectorAll('.parallax-layer'));
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Wenn reduced motion aktiv -> keine Animation (statischer Fallback)
+      if(prefersReduced) {
+        layers.forEach(layer => layer.style.transform = 'translateY(0)');
+        return;
+      }
+
+      // We track scrollY and request RAF to update transforms
+      let latestScrollY = window.scrollY || window.pageYOffset;
+      let ticking = false;
+
+      // Compute stage bounds once and on resize (for performance)
+      let stageTop = 0;
+      let stageHeight = stage.offsetHeight;
+
+      function updateStageMetrics(){
+        const rect = stage.getBoundingClientRect();
+        // page offset of stage's top
+        stageTop = rect.top + (window.scrollY || window.pageYOffset);
+        stageHeight = rect.height;
+      }
+      updateStageMetrics();
+      window.addEventListener('resize', updateStageMetrics, {passive:true});
+
+      function onScroll(){
+        latestScrollY = window.scrollY || window.pageYOffset;
+        requestTick();
+      }
+
+      function requestTick(){
+        if(!ticking){
+          requestAnimationFrame(update);
+        }
+        ticking = true;
+      }
+
+      function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+      function update(){
+        ticking = false;
+
+        // Determine how far the stage is from viewport (0..1)
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const stageCenter = stageTop + stageHeight / 2;
+        const viewportCenter = latestScrollY + viewportHeight / 2;
+        const distance = (viewportCenter - stageCenter); // negative if stage below
+        // Normalized factor: -1..1 ro
