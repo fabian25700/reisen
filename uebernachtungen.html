@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reise-App – Übernachtungen</title>
+<style>
+  body { font-family: 'Helvetica Neue', sans-serif; margin:0; padding:0; background:#f8f8f8; color:#333;}
+  header {background:#1a1a1a; color:#fff; padding:1rem; text-align:center;}
+  main {padding:2rem;}
+  table {width:100%; border-collapse:collapse; margin-bottom:2rem; background:#fff; border-radius:8px; overflow:hidden;}
+  th, td {padding:0.8rem; border-bottom:1px solid #ddd; text-align:left;}
+  th {background:#f0f0f0;}
+  input, textarea, button {padding:0.5rem; margin:0.3rem 0; width:100%; box-sizing:border-box; border-radius:5px; border:1px solid #ccc;}
+  button {background:#1a1a1a; color:#fff; cursor:pointer; transition:background 0.2s;}
+  button:hover {background:#333;}
+  .form-container {background:#fff; padding:1rem; border-radius:8px; margin-bottom:2rem;}
+  a {color:#1a1a1a; text-decoration:none; margin-right:1rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Reise-App – Übernachtungen</h1>
+  <nav>
+    <a href="../index.html">Startseite</a>
+    <a href="Fluege.html">Flüge</a>
+  </nav>
+</header>
+
+<main>
+
+<div class="form-container">
+  <h2>Neue Übernachtung hinzufügen</h2>
+  <form id="ueberForm">
+    <input type="date" id="datum" required>
+    <input type="text" id="land" placeholder="Land" required>
+    <input type="text" id="stadt" placeholder="Stadt" required>
+    <input type="text" id="hotel" placeholder="Hotel" required>
+    <input type="number" id="naechte" placeholder="Nächte" required min="1">
+    <textarea id="notiz" placeholder="Notiz"></textarea>
+    <button type="submit">Hinzufügen</button>
+  </form>
+</div>
+
+<table id="ueberTable">
+  <thead>
+    <tr>
+      <th>Datum</th>
+      <th>Land</th>
+      <th>Stadt</th>
+      <th>Hotel</th>
+      <th>Nächte</th>
+      <th>Notiz</th>
+      <th>Aktionen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Daten werden hier dynamisch geladen -->
+  </tbody>
+</table>
+
+<script>
+/************************************************************
+ * LocalStorage Key für Übernachtungen
+ ************************************************************/
+const STORAGE_KEY = 'uebernachtungenData';
+
+// Lade Daten aus localStorage
+function ladeDaten() {
+  const daten = localStorage.getItem(STORAGE_KEY);
+  return daten ? JSON.parse(daten) : [];
+}
+
+// Speichere Daten in localStorage
+function speichereDaten(daten) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(daten));
+}
+
+// Tabelle rendern
+function renderTabelle() {
+  const tbody = document.querySelector('#ueberTable tbody');
+  tbody.innerHTML = '';
+  const daten = ladeDaten();
+  daten.forEach((eintrag, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${eintrag.datum}</td>
+      <td>${eintrag.land}</td>
+      <td>${eintrag.stadt}</td>
+      <td>${eintrag.hotel}</td>
+      <td>${eintrag.naechte}</td>
+      <td>${eintrag.notiz}</td>
+      <td>
+        <button onclick="bearbeiten(${index})">Bearbeiten</button>
+        <button onclick="loeschen(${index})">Löschen</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Neues Eintrag hinzufügen
+const ueberForm = document.getElementById('ueberForm');
+ueberForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const daten = ladeDaten();
+  const neuerEintrag = {
+    datum: document.getElementById('datum').value,
+    land: document.getElementById('land').value,
+    stadt: document.getElementById('stadt').value,
+    hotel: document.getElementById('hotel').value,
+    naechte: document.getElementById('naechte').value,
+    notiz: document.getElementById('notiz').value
+  };
+  daten.push(neuerEintrag);
+  speichereDaten(daten);
+  ueberForm.reset();
+  renderTabelle();
+});
+
+// Bearbeiten
+function bearbeiten(index) {
+  const daten = ladeDaten();
+  const eintrag = daten[index];
+  eintrag.datum = prompt("Datum:", eintrag.datum) || eintrag.datum;
+  eintrag.land = prompt("Land:", eintrag.land) || eintrag.land;
+  eintrag.stadt = prompt("Stadt:", eintrag.stadt) || eintrag.stadt;
+  eintrag.hotel = prompt("Hotel:", eintrag.hotel) || eintrag.hotel;
+  eintrag.naechte = prompt("Nächte:", eintrag.naechte) || eintrag.naechte;
+  eintrag.notiz = prompt("Notiz:", eintrag.notiz) || eintrag.notiz;
+  daten[index] = eintrag;
+  speichereDaten(daten);
+  renderTabelle();
+}
+
+// Löschen
+function loeschen(index) {
+  if(confirm("Willst du diesen Eintrag wirklich löschen?")) {
+    const daten = ladeDaten();
+    daten.splice(index, 1);
+    speichereDaten(daten);
+    renderTabelle();
+  }
+}
+
+// Initiales Rendern
+renderTabelle();
+</script>
+
+</body>
+</html>
