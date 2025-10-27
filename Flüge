@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reise-App – Flüge (LocalStorage)</title>
+<style>
+  body { font-family: 'Helvetica Neue', sans-serif; margin:0; padding:0; background:#f8f8f8; color:#333;}
+  header {background:#1a1a1a; color:#fff; padding:1rem; text-align:center;}
+  main {padding:2rem;}
+  table {width:100%; border-collapse:collapse; margin-bottom:2rem; background:#fff; border-radius:8px; overflow:hidden;}
+  th, td {padding:0.8rem; border-bottom:1px solid #ddd; text-align:left;}
+  th {background:#f0f0f0;}
+  input, textarea, button {padding:0.5rem; margin:0.3rem 0; width:100%; box-sizing:border-box; border-radius:5px; border:1px solid #ccc;}
+  button {background:#1a1a1a; color:#fff; cursor:pointer; transition:background 0.2s;}
+  button:hover {background:#333;}
+  .form-container {background:#fff; padding:1rem; border-radius:8px; margin-bottom:2rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Reise-App – Flüge</h1>
+</header>
+
+<main>
+
+<div class="form-container">
+  <h2>Neuen Flug hinzufügen</h2>
+  <form id="flugForm">
+    <input type="date" id="datum" required>
+    <input type="text" id="abflug" placeholder="Abflug" required>
+    <input type="text" id="ankunft" placeholder="Ankunft" required>
+    <input type="text" id="ankunftLand" placeholder="Ankunft Land" required>
+    <input type="text" id="airline" placeholder="Airline" required>
+    <input type="text" id="flugzeug" placeholder="Flugzeug" required>
+    <textarea id="notiz" placeholder="Notiz"></textarea>
+    <button type="submit">Hinzufügen</button>
+  </form>
+</div>
+
+<table id="flugTable">
+  <thead>
+    <tr>
+      <th>Datum</th>
+      <th>Abflug</th>
+      <th>Ankunft</th>
+      <th>Ankunft Land</th>
+      <th>Airline</th>
+      <th>Flugzeug</th>
+      <th>Notiz</th>
+      <th>Aktionen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Daten werden hier dynamisch geladen -->
+  </tbody>
+</table>
+
+<script>
+/************************************************************
+ * Alle Flugdaten werden lokal im Browser gespeichert
+ * localStorage speichert Daten als JSON-String
+ ************************************************************/
+
+// Key für localStorage
+const STORAGE_KEY = 'fluegeData';
+
+// Hilfsfunktion: Daten aus localStorage laden
+function ladeDaten() {
+  const daten = localStorage.getItem(STORAGE_KEY);
+  return daten ? JSON.parse(daten) : [];
+}
+
+// Hilfsfunktion: Daten in localStorage speichern
+function speichereDaten(daten) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(daten));
+}
+
+// Tabelle rendern
+function renderTabelle() {
+  const tbody = document.querySelector('#flugTable tbody');
+  tbody.innerHTML = '';
+  const daten = ladeDaten();
+  daten.forEach((flug, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${flug.datum}</td>
+      <td>${flug.abflug}</td>
+      <td>${flug.ankunft}</td>
+      <td>${flug.ankunftLand}</td>
+      <td>${flug.airline}</td>
+      <td>${flug.flugzeug}</td>
+      <td>${flug.notiz}</td>
+      <td>
+        <button onclick="bearbeiten(${index})">Bearbeiten</button>
+        <button onclick="loeschen(${index})">Löschen</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Flug hinzufügen
+const flugForm = document.getElementById('flugForm');
+flugForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const daten = ladeDaten();
+  const neuerFlug = {
+    datum: document.getElementById('datum').value,
+    abflug: document.getElementById('abflug').value,
+    ankunft: document.getElementById('ankunft').value,
+    ankunftLand: document.getElementById('ankunftLand').value,
+    airline: document.getElementById('airline').value,
+    flugzeug: document.getElementById('flugzeug').value,
+    notiz: document.getElementById('notiz').value
+  };
+  daten.push(neuerFlug);
+  speichereDaten(daten);
+  flugForm.reset();
+  renderTabelle();
+});
+
+// Flug bearbeiten
+function bearbeiten(index) {
+  const daten = ladeDaten();
+  const flug = daten[index];
+  // Einfache Prompt-Abfrage
+  flug.datum = prompt("Datum:", flug.datum) || flug.datum;
+  flug.abflug = prompt("Abflug:", flug.abflug) || flug.abflug;
+  flug.ankunft = prompt("Ankunft:", flug.ankunft) || flug.ankunft;
+  flug.ankunftLand = prompt("Ankunft Land:", flug.ankunftLand) || flug.ankunftLand;
+  flug.airline = prompt("Airline:", flug.airline) || flug.airline;
+  flug.flugzeug = prompt("Flugzeug:", flug.flugzeug) || flug.flugzeug;
+  flug.notiz = prompt("Notiz:", flug.notiz) || flug.notiz;
+  daten[index] = flug;
+  speichereDaten(daten);
+  renderTabelle();
+}
+
+// Flug löschen
+function loeschen(index) {
+  if(confirm("Willst du diesen Flug wirklich löschen?")) {
+    const daten = ladeDaten();
+    daten.splice(index, 1);
+    speichereDaten(daten);
+    renderTabelle();
+  }
+}
+
+// Initiales Rendern
+renderTabelle();
+</script>
+
+</body>
+</html>
