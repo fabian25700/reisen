@@ -2,29 +2,29 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Meine Reisekarte</title>
+<title>Reisekarte</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <style>
-  html,body {margin:0;height:100%;background:#f8f9fa;}
-  #map {height:100vh;width:100vw;}
-  .legend {background:white;padding:8px;border-radius:6px;font-size:13px;line-height:1.4;}
-  .legend div {margin-bottom:4px;}
+  html,body{margin:0;height:100%;background:#f8f9fa;}
+  #map{height:100vh;width:100vw;}
+  .legend{background:white;padding:8px;border-radius:6px;font-size:13px;line-height:1.4;}
+  .legend div{margin-bottom:4px;}
 </style>
 </head>
 <body>
 <div id="map"></div>
 
 <script>
-// --- Besuchsdaten (deutsche Namen) ---
+// --- Besuchsdaten ---
 const countryVisits = {
-  "Deutschland": 10,
-  "Spanien": 6,
-  "Frankreich": 5,
-  "Niederlande": 5,
-  "Schweiz": 4,
-  "Griechenland": 4,
-  "Italien": 4,
+  "Deutschland": 999,
+  "Spanien": 5,
+  "Frankreich": 4,
+  "Niederlande": 4,
+  "Schweiz": 3,
+  "Griechenland": 3,
+  "Italien": 3,
   "Türkei": 3,
   "England": 3,
   "Schweden": 3,
@@ -47,7 +47,7 @@ const countryVisits = {
   "Lettland": 1
 };
 
-// --- Mapping von deutschen zu englischen GeoJSON-Namen ---
+// --- Mapping deutsch → englisch (GeoJSON-ADMIN-Namen) ---
 const nameMap = {
   "Deutschland": "Germany",
   "Spanien": "Spain",
@@ -72,7 +72,7 @@ const nameMap = {
   "Portugal": "Portugal",
   "Norwegen": "Norway",
   "Litauen": "Lithuania",
-  "USA": "United States",
+  "USA": "United States of America",
   "Slowakei": "Slovakia",
   "Mauritius": "Mauritius",
   "Lettland": "Latvia"
@@ -80,59 +80,60 @@ const nameMap = {
 
 // --- Farbskala ---
 function getColor(v) {
-  return v >= 8 ? '#084081' :
-         v >= 5 ? '#0868ac' :
-         v >= 4 ? '#2b8cbe' :
-         v >= 3 ? '#4eb3d3' :
-         v >= 2 ? '#7bccc4' :
-         v >= 1 ? '#bae4bc' :
-                  '#f0f0f0';
+  return v >= 100 ? '#08306b' :
+         v >= 8 ? '#08519c' :
+         v >= 5 ? '#3182bd' :
+         v >= 3 ? '#6baed6' :
+         v >= 2 ? '#9ecae1' :
+         v >= 1 ? '#c6dbef' :
+                  '#f2f2f2';
 }
 
-// --- Karte initialisieren ---
-const map = L.map('map', { minZoom: 2 }).setView([30, 10], 2);
+// --- Karte ---
+const map = L.map('map', {minZoom: 2}).setView([30, 10], 2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap'
 }).addTo(map);
 
-// --- GeoJSON laden und einfärben ---
+// --- GeoJSON laden ---
 fetch("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
   .then(res => res.json())
   .then(data => {
+    const notFound = [];
     L.geoJSON(data, {
       style: feature => {
-        const countryName = feature.properties.ADMIN;
-        const germanMatch = Object.keys(nameMap).find(de => nameMap[de] === countryName);
-        const visits = germanMatch ? countryVisits[germanMatch] : 0;
+        const adminName = feature.properties.ADMIN;
+        const germanName = Object.keys(nameMap).find(de => nameMap[de] === adminName);
+        const visits = germanName ? countryVisits[germanName] : 0;
+        if (!germanName) notFound.push(adminName);
         return {
-          fillColor: getColor(visits || 0),
+          fillColor: getColor(visits),
+          color: "#666",
           weight: 0.6,
-          opacity: 1,
-          color: '#444',
           fillOpacity: 0.9
         };
       },
       onEachFeature: (feature, layer) => {
-        const countryName = feature.properties.ADMIN;
-        const germanMatch = Object.keys(nameMap).find(de => nameMap[de] === countryName);
-        if (germanMatch) {
-          const visits = countryVisits[germanMatch];
-          layer.bindPopup(`<b>${germanMatch}</b><br>Besuche: ${visits >= 10 ? "♾️" : visits}`);
+        const adminName = feature.properties.ADMIN;
+        const germanName = Object.keys(nameMap).find(de => nameMap[de] === adminName);
+        const visits = germanName ? countryVisits[germanName] : 0;
+        if (germanName && visits > 0) {
+          layer.bindPopup(`<b>${germanName}</b><br>Besuche: ${visits >= 100 ? "♾️" : visits}`);
         }
       }
     }).addTo(map);
+
+    console.log("Nicht gematchte Länder:", [...new Set(notFound)].sort());
   });
 
 // --- Legende ---
-const legend = L.control({position: 'bottomleft'});
-legend.onAdd = function (map) {
-  const div = L.DomUtil.create('div', 'legend');
-  const grades = [1,2,3,4,5,8];
-  const labels = ['1','2','3','4+','5+','8+'];
-  for (let i = 0; i < grades.length; i++) {
-    div.innerHTML +=
-      '<div><i style="background:' + getColor(grades[i]) + ';width:15px;height:15px;display:inline-block;margin-right:5px;"></i>' +
-      labels[i] + '</div>';
+const legend = L.control({position:'bottomleft'});
+legend.onAdd = function(map){
+  const div=L.DomUtil.create('div','legend');
+  const grades=[1,2,3,5,8,100];
+  const labels=['1','2','3','5+','8+','♾️'];
+  for(let i=0;i<grades.length;i++){
+    div.innerHTML+='<div><i style="background:'+getColor(grades[i])+';width:15px;height:15px;display:inline-block;margin-right:5px;"></i>'+labels[i]+'</div>';
   }
   return div;
 };
@@ -140,4 +141,3 @@ legend.addTo(map);
 </script>
 </body>
 </html>
-
