@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -6,37 +5,36 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <style>
-  html,body{margin:0;height:100%;}
-  #map{height:100vh;width:100vw;}
+html,body{margin:0;height:100%;}
+#map{height:100vh;width:100vw;}
 </style>
 </head>
 <body>
 <div id="map"></div>
-
 <script>
 // === Deine bereisten Länder (Deutsch) ===
 const visitedDE = [
-  "Deutschland","Spanien","Frankreich","Niederlande","Schweiz","Griechenland",
-  "Italien","Türkei","England","Schweden","Vatikan","Vereinigte Arabische Emirate",
-  "Dänemark","Luxemburg","Österreich","Belgien","Malta","Gibraltar","Marokko",
-  "Ungarn","Portugal","Norwegen","Litauen","USA","Slowakei","Mauritius","Lettland"
+"Deutschland","Spanien","Frankreich","Niederlande","Schweiz","Griechenland",
+"Italien","Türkei","England","Schweden","Vatikan","Vereinigte Arabische Emirate",
+"Dänemark","Luxemburg","Österreich","Belgien","Malta","Gibraltar","Marokko",
+"Ungarn","Portugal","Norwegen","Litauen","USA","Slowakei","Mauritius","Lettland"
 ];
 
 // === Map erstellen ===
 const map = L.map('map', {minZoom: 2}).setView([30, 10], 2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap-Mitwirkende'
+attribution: '&copy; OpenStreetMap-Mitwirkende'
 }).addTo(map);
 
 // === Übersetzung Deutsch → Englisch (für GeoJSON Matching) ===
 const mapDE_EN = {
-  "Deutschland":"Germany","Spanien":"Spain","Frankreich":"France","Niederlande":"Netherlands",
-  "Schweiz":"Switzerland","Griechenland":"Greece","Italien":"Italy","Türkei":"Turkey",
-  "England":"United Kingdom","Schweden":"Sweden","Vatikan":"Vatican","Vereinigte Arabische Emirate":"United Arab Emirates",
-  "Dänemark":"Denmark","Luxemburg":"Luxembourg","Österreich":"Austria","Belgien":"Belgium",
-  "Malta":"Malta","Gibraltar":"Gibraltar","Marokko":"Morocco","Ungarn":"Hungary","Portugal":"Portugal",
-  "Norwegen":"Norway","Litauen":"Lithuania","USA":"United States of America","Slowakei":"Slovakia",
-  "Mauritius":"Mauritius","Lettland":"Latvia"
+"Deutschland":"Germany","Spanien":"Spain","Frankreich":"France","Niederlande":"Netherlands",
+"Schweiz":"Switzerland","Griechenland":"Greece","Italien":"Italy","Türkei":"Turkey",
+"England":"United Kingdom","Schweden":"Sweden","Vatikan":"Vatican City","Vereinigte Arabische Emirate":"United Arab Emirates",
+"Dänemark":"Denmark","Luxemburg":"Luxembourg","Österreich":"Austria","Belgien":"Belgium",
+"Malta":"Malta","Gibraltar":"Gibraltar","Marokko":"Morocco","Ungarn":"Hungary","Portugal":"Portugal",
+"Norwegen":"Norway","Litauen":"Lithuania","USA":"United States of America","Slowakei":"Slovakia",
+"Mauritius":"Mauritius","Lettland":"Latvia"
 };
 
 // === Englische Ländernamen generieren ===
@@ -44,25 +42,25 @@ const visitedEN = visitedDE.map(d => mapDE_EN[d]).filter(Boolean);
 
 // === GeoJSON laden ===
 fetch("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
-  .then(res => res.json())
-  .then(data => {
-    L.geoJSON(data, {
-      style: feature => ({
-        fillColor: visitedEN.includes(feature.properties.ADMIN) ? '#00cc44' : '#ffcccc',
-        color: '#333',
-        weight: 0.4,
-        fillOpacity: 0.85
-      }),
-      onEachFeature: (feature, layer) => {
-        const name = feature.properties.ADMIN;
-        const matched = visitedEN.includes(name);
-        const german = Object.keys(mapDE_EN).find(key => mapDE_EN[key] === name);
-        layer.bindPopup(
-          `<b>${german || name}</b><br>${matched ? "✅ besucht" : "❌ nicht besucht"}`
-        );
-      }
-    }).addTo(map);
-  });
+.then(res => res.json())
+.then(data => {
+L.geoJSON(data, {
+style: feature => ({
+fillColor: visitedEN.includes(feature.properties.ADMIN) ? '#00cc44' : '#ffcccc',
+color: '#333',
+weight: 0.4,
+fillOpacity: 0.85
+}),
+onEachFeature: (feature, layer) => {
+const name = feature.properties.ADMIN;
+const matched = visitedEN.includes(name);
+const german = Object.keys(mapDE_EN).find(key => mapDE_EN[key] === name);
+layer.bindPopup(
+`<b>${german || name}</b><br>${matched ? "✅ besucht" : "❌ nicht besucht"}`
+);
+}
+}).addTo(map);
+});
 </script>
 </body>
 </html>
