@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bergheimer Beobachter</title>
+  <meta name="description" content="Bergheimer Beobachter — ein schlichter, traditionsbewusster Fußball-Blog.">
+  <style>
+    /* Farb- und Schrift-Konfiguration */
+    :root{
+      --red-deep: #8b0f1a; /* gedecktes, sattes Rot (an FC Köln angelehnt) */
+      --black: #0a0a0a;
+      --muted: #444444;
+      --page-max: 880px;
+      --gutter: 20px;
+    }
+
+    /* Grund */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:#ffffff;color:var(--black);font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;}
+    img{max-width:100%;height:auto;display:block}
+
+    /* Zentrierte Seite */
+    .site{
+      max-width:var(--page-max);
+      margin: 0 auto;
+      padding: 28px var(--gutter) 56px;
+    }
+
+    /* Kopfbereich mit zwei roten Balken */
+    header.site-header{
+      margin:0 0 18px;
+    }
+    .bars{
+      width:100%;
+      display:block;
+    }
+    .bar{
+      height:12px;                /* oberer Balken etwas dicker */
+      background:var(--red-deep);
+      margin:0;
+    }
+    .bar--thin{
+      height:8px;                 /* unterer Balken schmaler */
+      background:var(--red-deep);
+    }
+
+    /* Header-Branding (Logo + Titelbereich) */
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin:18px 0 28px;
+    }
+
+    /* Retro-Logo (Platzhalter) */
+    .logo{
+      flex:0 0 auto;
+      width:72px;
+      height:72px;
+      border:2px solid var(--black);
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:11px;
+      text-align:center;
+      line-height:1;
+      color:var(--black);
+      font-weight:700;
+      letter-spacing:0.02em;
+      box-shadow:none;
+    }
+    /* Platzhalter-Text im Logo */
+    .logo small{display:block;font-size:10px;line-height:1;color:var(--muted);font-weight:600}
+
+    /* Blog-Titel prominent (Serifen-Schrift) */
+    h1.site-title{
+      margin:0;
+      font-family: "Georgia", "Times New Roman", Times, serif;
+      font-weight:700;
+      font-size:clamp(28px,4vw,44px);
+      color:var(--black);
+      letter-spacing:0.02em;
+      line-height:1.03;
+      text-align:left;
+    }
+
+    /* Untertitel / Beschreibung (klein und dezent) */
+    .subtitle{
+      margin-top:8px;
+      font-size:0.95rem;
+      color:var(--muted);
+      font-family: monospace, "Courier New", monospace;
+    }
+
+    /* Artikel-Liste (zentriert, keine Sidebar) */
+    main {
+      margin-top:10px;
+    }
+    .posts {
+      margin-top:18px;
+      display:flex;
+      flex-direction:column;
+      gap:22px;
+    }
+
+    article.post{
+      border-top:3px solid transparent; /* optische Trennung minimal */
+      padding-top:12px;
+    }
+
+    /* Post-Überschrift im Serif (rustikal) */
+    article.post h2{
+      margin:0 0 6px 0;
+      font-family: "Georgia", "Times New Roman", Times, serif;
+      font-weight:700;
+      font-size:1.25rem;
+      color:var(--black);
+      letter-spacing:0;
+    }
+
+    /* Metadaten: Datum und Autor */
+    .meta{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      font-size:0.82rem;
+      color:var(--muted);
+      font-family: monospace, "Courier New", monospace;
+      margin-bottom:10px;
+    }
+    .meta time{opacity:0.95}
+
+    /* Vorschau-Text */
+    .excerpt{
+      margin:0;
+      color:var(--black);
+      line-height:1.55;
+      font-size:1rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Dezent rote Hervorhebung für erste Zeile/Absatz (Akzent) */
+    .excerpt strong{color:var(--red-deep);font-weight:700}
+
+    /* Lesbarkeit auf kleineren Bildschirmen */
+    @media (max-width:540px){
+      .brand{flex-direction:column;align-items:flex-start;gap:10px}
+      .logo{width:60px;height:60px}
+      .site{padding:20px}
+    }
+
+    /* Minimale, rustikale Trennung zwischen Posts */
+    .divider{
+      height:1px;
+      background:#eee;
+      margin:10px 0 0;
+    }
+
+    /* Kleiner Text unten, mittig */
+    .slogan{
+      margin-top:56px;
+      text-align:center;
+      font-family: monospace, "Courier New", monospace;
+      font-size:0.78rem;
+      color:var(--muted);
+      letter-spacing:0.08em;
+    }
+
+    /* Keine Links, Buttons etc. — reduzierter Stil */
+    a{color:var(--red-deep);text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div class="site" role="document">
+
+    <!-- Header mit zwei roten Balken -->
+    <header class="site-header" role="banner" aria-label="Kopfbereich">
+      <div class="bars" aria-hidden="true">
+        <div class="bar" role="presentation"></div>
+        <div class="bar--thin" role="presentation"></div>
+      </div>
+
+      <!-- Brand: Logo links (Retro-Platzhalter) und Titel rechts -->
+      <div class="brand">
+        <!-- Logo: Platzhalter (statt echtem Vereinslogo) -->
+        <div class="logo" aria-hidden="true">
+          <div>
+            <div style="font-size:18px;line-height:1">FC</div>
+            <small>retro</small>
+          </div>
+        </div>
+
+        <!-- Titelbereich -->
+        <div style="flex:1;">
+          <h1 class="site-title">Bergheimer Beobachter</h1>
+          <div class="subtitle">Schlicht. Traditionsbewusst. Rustikal-ehrlich.</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hauptbereich mit Beiträgen -->
+    <main role="main" aria-label="Beiträge">
+      <section class="posts" aria-labelledby="postsHeading">
+        <h2 id="postsHeading" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Beiträge</h2>
+
+        <!-- Beispiel-Beitrag 1 -->
+        <article class="post" aria-labelledby="post1-title">
+          <h2 id="post1-title">Alte Schule: Der Verein und seine Wurzeln</h2>
+          <div class="meta">
+            <time datetime="2025-10-28">28. Oktober 2025</time>
+            <span>•</span>
+            <span>Verfasser: Thomas Berg</span>
+          </div>
+          <p class="excerpt">
+            <strong>Tradition vor Trend:</strong> In diesem Beitrag betrachten wir die historischen Wurzeln des Vereins und
+            warum die lokale Identität wichtiger ist als schnelle Erfolge. Ein ehrlicher Blick auf Vereinsarbeit, Fans und Zusammenhalt.
+          </p>
+          <div class="divider" aria-hidden="true"></div>
+        </article>
+
+        <!-- Beispiel-Beitrag 2 -->
+        <article class="post" aria-labelledby="post2-title">
+          <h2 id="post2-title">Spieltag: Ein Abend im Block C</h2>
+          <div class="meta">
+            <time datetime="2025-10-21">21. Oktober 2025</time>
+            <span>•</span>
+            <span>Verfasser: Lena Krüger</span>
+          </div>
+          <p class="excerpt">
+            Die Kurve kochte. Ein Bericht aus dem Block C: Stimmung, Trommeln und die pure Energie, die ein Heimspiel
+            ins Stadion bringt. Kein Glitzer — nur echte Emotionen.
+          </p>
+          <div class="divider" aria-hidden="true"></div>
+        </article>
+
+        <!-- Beispiel-Beitrag 3 -->
+        <article class="post" aria-labelledby="post3-title">
+          <h2 id="post3-title">Analyse: Abwehrverbesserungen in der Winterpause</h2>
+          <div class="meta">
+            <time datetime="2025-09-30">30. September 2025</time>
+            <span>•</span>
+            <span>Verfasser: M. Schulte</span>
+          </div>
+          <p class="excerpt">
+            Taktik statt Trend: Eine nüchterne Analyse der Defensivstrategie. Welche Anpassungen bringen Stabilität und
+            wie lassen sich Spielerprofile gezielt nutzen?
+          </p>
+          <div class="divider" aria-hidden="true"></div>
+        </article>
+
+        <!-- Beispiel-Beitrag 4 -->
+        <article class="post" aria-labelledby="post4-title">
+          <h2 id="post4-title">Fanprojekt: Renovierung der alten Fankneipe</h2>
+          <div class="meta">
+            <time datetime="2025-08-12">12. August 2025</time>
+            <span>•</span>
+            <span>Verfasser: Jonas Keller</span>
+          </div>
+          <p class="excerpt">
+            Ein Blick auf das ehrenamtliche Engagement rund um die Kneipe am Stadion: Baupläne, Finanzierungen und die
+            Menschen, die das Projekt voranbringen — im Geiste der Gemeinschaft.
+          </p>
+          <div class="divider" aria-hidden="true"></div>
+        </article>
+      </section>
+    </main>
+
+    <!-- Nur der kleine, mittig platzierte Text am Ende -->
+    <div class="slogan" aria-hidden="false">KÄMPFEN THOMAS!</div>
+
+  </div>
+</body>
+</html>
